@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Adicione estilos CSS aqui */
+    /* Estilize o card do filme, a paginação e os elementos conforme suas preferências. */
+  </style>
+</head>
+<body>
+  <h1>Lista de Filmes</h1>
+
+  <!-- Campo de pesquisa por nome do filme -->
+  <input type="text" id="searchInput" placeholder="Pesquisar por nome do filme">
+  
+  <!-- Filtro de pesquisa por categoria -->
+  <select id="categoryFilter">
+    <option value="Terror">Terror</option>
+    <option value="Comédia">Comédia</option>
+    <option value="Romance">Romance</option>
+  </select>
+  
+  <!-- Lista de filmes -->
+  <div id="movieList">
+    <!-- Os filmes serão listados aqui usando JavaScript -->
+  </div>
+  
+  <!-- Paginação -->
+  <div id="pagination">
+    <!-- Os botões de paginação serão gerados aqui usando JavaScript -->
+  </div>
+
+  <script>
+    // Lista de filmes (exemplo com 20 filmes)
+    const movies = [
+  { name: "Como Nossos Pais", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkHLm1OCJSHO4Qw6f80190qCiZW2Xv28gHTw&usqp=CAU", tickets: 100, category: "Terror" },
+  { name: "Eduardo e Monica", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpe5jm8FJ5de3pPHGYUxKe46KJiakjU0rMOg&usqp=CAU", tickets: 150, category: "Comédia" },
+  { name: "Não Aceitamos Devoluções", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBzt1pn4fPj2AN-qUhlz62-KpK9JlgKP0nZYVtPVIB2xQagcPyOVwKyMhp-QN0nBc2kdU&usqp=CAU", tickets: 80, category: "Romance" },
+  { name: "Ate Que A Sorte Nos Separe", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSosQCG7CoyUHrfqhgLG-GU1_vdIgHUMot5M9u5Vtzj-vTWIn5YjAu4E2lq3SEKixLjWug&usqp=CAU", tickets: 120, category: "Terror" },
+  { name: "Auto Da Compadecida", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0XkXxEecL211ubGbyUP_SbeZOp0K_rQ98Ew&usqp=CAU", tickets: 90, category: "Comédia" },
+  { name: "Minha Mãe É Uma Peça", image: "https://cinemacao.com/wp-content/uploads/2013/06/minhamaeeumapeca_poster.jpg", tickets: 110, category: "Romance" },
+  { name: "Memoria Postumas", image: "https://papoliterarioblog.files.wordpress.com/2020/10/memorias_postumas_2001.jpg?w=300", tickets: 70, category: "Terror" },
+  { name: "Piratas Dos Caribes", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyvibaykWw5STicpdIwS49y8qoN8SiWAeucw&usqp=CAU", tickets: 140, category: "Comédia" },
+  { name: "Carandiru", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQN_ls7cDQ7ABqY0myqXrBFXvahQ_VwNv6FWw&usqp=CAU", tickets: 60, category: "Romance" },
+  { name: "Vizinhos", image: "https://br.paipee.com/wp-content/uploads/2022/09/img_8835.jpg", tickets: 130, category: "Terror" },
+  // Adicione mais filmes aqui em diferentes categorias
+];
+
+    // Elementos HTML
+    const movieList = document.getElementById("movieList");
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const pagination = document.getElementById("pagination");
+    
+    // Função para renderizar a lista de filmes
+    function renderMovieList(pageNumber = 1) {
+      const moviesPerPage = 10;
+      const startIndex = (pageNumber - 1) * moviesPerPage;
+      const endIndex = startIndex + moviesPerPage;
+      
+      const filteredMovies = movies.filter(movie => {
+        const searchValue = searchInput.value.toLowerCase();
+        const categoryValue = categoryFilter.value;
+        
+        return (
+          (movie.name.toLowerCase().includes(searchValue) || searchValue === "") &&
+          (categoryValue === "Todos" || movie.category === categoryValue)
+        );
+      });
+      
+      const paginatedMovies = filteredMovies.slice(startIndex, endIndex);
+      
+      movieList.innerHTML = "";
+      
+      for (const movie of paginatedMovies) {
+        const movieCard = document.createElement("div");
+        movieCard.classList.add("movie-card");
+        
+        // Adicione o HTML para o card do filme com as informações
+        movieCard.innerHTML = `
+          <h2>${movie.name}</h2>
+          <img src="${movie.image}" alt="${movie.name}">
+          <p>Tickets disponíveis: ${movie.tickets}</p>
+          <p>Categoria: ${movie.category}</p>
+        `;
+        
+        movieList.appendChild(movieCard);
+      }
+      
+      renderPagination(filteredMovies.length, pageNumber);
+    }
+    
+    // Função para renderizar a paginação
+    function renderPagination(totalMovies, currentPage) {
+      pagination.innerHTML = "";
+      
+      const totalPages = Math.ceil(totalMovies / 10);
+      
+      for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement("button");
+        pageButton.innerText = i;
+        
+        if (i === currentPage) {
+          pageButton.disabled = true;
+        }
+        
+        pageButton.addEventListener("click", () => {
+          renderMovieList(i);
+        });
+        
+        pagination.appendChild(pageButton);
+      }
+    }
+    
+    // Atualize a lista de filmes quando houver alterações na pesquisa ou no filtro
+    searchInput.addEventListener("input", () => renderMovieList());
+    categoryFilter.addEventListener("change", () => renderMovieList());
+    
+    // Renderize a lista inicialmente
+    renderMovieList();
+  </script>
+</body>
+</html>
